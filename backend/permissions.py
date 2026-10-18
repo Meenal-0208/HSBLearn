@@ -41,7 +41,7 @@ def verify_course_access(user: dict, course_id: int):
     """
     with get_db() as conn:
         cursor = conn.cursor()
-        cursor.execute("SELECT instructor_id FROM courses WHERE id = ?", (course_id,))
+        cursor.execute("SELECT instructor_id, status FROM courses WHERE id = ?", (course_id,))
         course = cursor.fetchone()
         if not course:
             raise HTTPException(status_code=404, detail="Course not found.")
