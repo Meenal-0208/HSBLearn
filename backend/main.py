@@ -85,22 +85,10 @@ def health_check():
 
 @app.post("/api/auth/register", response_model=TokenResponse)
 def register(req: UserRegisterRequest):
-    with get_db() as conn:
-        cursor = conn.cursor()
-        cursor.execute("SELECT id FROM users WHERE email = ?", (req.email,))
-        if cursor.fetchone():
-            raise HTTPException(status_code=400, detail="An account with this email already exists.")
-        
-        pwd_hash = get_password_hash(req.password)
-        cursor.execute("""
-            INSERT INTO users (name, email, password_hash, role)
-            VALUES (?, ?, ?, ?)
-        """, (req.name, req.email, pwd_hash, req.role))
-        user_id = cursor.lastrowid
-
-        token = create_access_token({"sub": user_id, "role": req.role})
-        user_resp = UserResponse(id=user_id, name=req.name, email=req.email, role=req.role)
-        return TokenResponse(access_token=token, user=user_resp)
+    raise HTTPException(
+        status_code=403,
+        detail="Self-registration is disabled. Please contact your administrator for account access."
+    )
 
 @app.post("/api/auth/login", response_model=TokenResponse)
 def login(req: UserLoginRequest):
