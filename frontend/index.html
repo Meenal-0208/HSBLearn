@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HSBLearn - AI-Native Learning Platform</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+    .dark .glass-card {
+      background: rgba(15, 23, 42, 0.85);
+      border-color: rgba(51, 65, 85, 0.8);
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-indigo-50 via-purple-50/40 to-pink-50/30 dark:from-slate-950 dark:via-slate-900 dark:to-indigo-950/50 min-h-screen text-slate-800 dark:text-slate-100 flex flex-col justify-between selection:bg-indigo-500 selection:text-white transition-colors duration-200">
+  <!-- Glowing Background Orbs -->
+  <div class="fixed top-0 left-1/4 w-96 h-96 bg-indigo-300/30 dark:bg-indigo-600/15 rounded-full blur-3xl pointer-events-none -z-10"></div>
+  <div class="fixed bottom-10 right-1/4 w-96 h-96 bg-purple-300/25 dark:bg-purple-600/15 rounded-full blur-3xl pointer-events-none -z-10"></div>
+
+  <!-- Header -->
+  <header class="glass-card border-b border-indigo-100/80 dark:border-slate-800 sticky top-0 z-50 shadow-sm">
+    <div class="max-w-6xl mx-auto px-4 py-3.5 flex justify-between items-center">
+      <div class="flex items-center space-x-3">
+        <img src="/static/logo.png" alt="HSB Logo" class="h-9 w-auto object-contain rounded-lg">
+        <div>
+          <span class="text-xl font-extrabold bg-gradient-to-r from-blue-700 via-indigo-600 to-purple-600 dark:from-blue-400 dark:via-indigo-300 dark:to-purple-300 bg-clip-text text-transparent">HSBLearn</span>
+          <span class="hidden sm:inline-block ml-2 text-[10px] tracking-widest uppercase font-bold px-2 py-0.5 rounded-full bg-gradient-to-r from-blue-500/10 to-indigo-500/10 dark:from-blue-500/20 dark:to-indigo-500/20 text-blue-700 dark:text-blue-300 border border-blue-200/50 dark:border-blue-800/50">Next-Gen LMS</span>
+        </div>
+      </div>
+      <div class="flex items-center space-x-3">
+        <button onclick="toggleTheme()" class="theme-toggle-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-white/80 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition shadow-sm flex items-center space-x-1.5">
+          🌙 <span class="hidden sm:inline text-xs">Dark</span>
+        </button>
+        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-400 border border-emerald-200/60 dark:border-emerald-800/60">
+          <span class="w-1.5 h-1.5 mr-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Port 9000
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Content -->
+  <main class="max-w-5xl mx-auto px-4 py-12 flex-grow flex flex-col justify-center">
+    <div class="text-center mb-10 space-y-3">
+      <div class="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-white/80 dark:bg-slate-800/80 border border-indigo-200/60 dark:border-indigo-800/60 shadow-sm text-xs font-bold text-indigo-600 dark:text-indigo-400 mb-2">
+        <span>✨ Grounded AI &middot; Smart Study Space &middot; Verifiable Mastery</span>
+      </div>
+      <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-tight">
+        Master Your Courses With <br class="hidden sm:inline" />
+        <span class="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 dark:from-indigo-400 dark:via-purple-300 dark:to-pink-400 bg-clip-text text-transparent">Grounded AI Intelligence</span>
+      </h1>
+      <p class="text-base sm:text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto font-normal">
+        A dual-space platform combining instructor-curated classrooms with private student workspaces, interactive practice quizzes, and verifiable progress metrics.
+      </p>
+    </div>
+
+    <!-- Login Card with Gradient Border -->
+    <div class="relative max-w-md mx-auto w-full group">
+      <div class="absolute -inset-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-2xl blur opacity-30 group-hover:opacity-60 transition duration-500"></div>
+      
+      <div class="relative glass-card p-8 rounded-2xl shadow-xl border border-white/80 dark:border-slate-800">
+        <div class="flex items-center justify-center space-x-2 mb-6">
+          <div class="w-8 h-8 rounded-lg bg-indigo-100 dark:bg-indigo-900/60 text-indigo-600 dark:text-indigo-300 flex items-center justify-center text-sm font-bold">🔐</div>
+          <h2 class="text-xl font-bold text-slate-900 dark:text-white">Sign in to your space</h2>
+        </div>
+        
+        <div id="alertBox" class="hidden mb-4 p-3 rounded-xl text-xs font-medium"></div>
+
+        <form id="loginForm" class="space-y-4">
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1.5">Email Address</label>
+            <input type="email" id="email" required class="w-full px-3.5 py-2.5 bg-slate-50/70 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white focus:bg-white dark:focus:bg-slate-900 focus:ring-2 focus:ring-indigo-500 focus:outline-none transition" placeholder="student@hsblearn.local">
+          </div>
+          <div>
+            <div class="flex justify-between items-center mb-1.5">
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300">Password</label>
+              <button type="button" onclick="openForgotModal()" class="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 hover:underline">Forgot Password?</button>
+            </div>
+            <input type="password" id="password" required class="w-full px-3.5 py-2.5 bg-slate-50/70 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white focus:bg-white dark:focus:bg-slate-900 focus:ring-2 focus:ring-indigo-500 focus:outline-none transition" placeholder="••••••••">
+          </div>
+          <button type="submit" id="submitBtn" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold py-2.5 px-4 rounded-xl shadow-lg shadow-indigo-500/25 transition duration-200 transform hover:-translate-y-0.5">
+            Sign In &rarr;
+          </button>
+        </form>
+
+        <!-- Registration Form (hidden by default) -->
+        <form id="registerForm" class="space-y-4 hidden">
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1.5">Full Name</label>
+            <input type="text" id="regName" required class="w-full px-3.5 py-2.5 bg-slate-50/70 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white focus:bg-white dark:focus:bg-slate-900 focus:ring-2 focus:ring-indigo-500 focus:outline-none transition" placeholder="John Doe">
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1.5">Email Address</label>
+            <input type="email" id="regEmail" required class="w-full px-3.5 py-2.5 bg-slate-50/70 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white focus:bg-white dark:focus:bg-slate-900 focus:ring-2 focus:ring-indigo-500 focus:outline-none transition" placeholder="john@example.com">
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1.5">Password</label>
+            <input type="password" id="regPassword" required minlength="6" class="w-full px-3.5 py-2.5 bg-slate-50/70 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white focus:bg-white dark:focus:bg-slate-900 focus:ring-2 focus:ring-indigo-500 focus:outline-none transition" placeholder="••••••••">
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1.5">Account Role</label>
+            <select id="regRole" class="w-full px-3.5 py-2.5 bg-slate-50/70 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white focus:bg-white dark:focus:bg-slate-900 focus:ring-2 focus:ring-indigo-500 focus:outline-none transition cursor-pointer">
+              <option value="student">🎓 Student</option>
+              <option value="instructor">👨‍🏫 Instructor</option>
+            </select>
+          </div>
+          <button type="submit" id="regSubmitBtn" class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold py-2.5 px-4 rounded-xl shadow-lg shadow-emerald-500/25 transition duration-200 transform hover:-translate-y-0.5">
+            Create Account &rarr;
+          </button>
+        </form>
+
+        <!-- Toggle Switcher -->
+        <div class="mt-6 pt-5 border-t border-slate-200/60 dark:border-slate-800 text-center">
+          <button type="button" id="toggleAuthBtn" onclick="toggleAuthMode()" class="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline">
+            Don't have an account? Register here
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Forgot Password Modal -->
+  <div id="forgotModal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+    <div class="glass-card bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-2xl max-w-sm w-full border border-slate-200 dark:border-slate-800 space-y-4">
+      <div class="flex justify-between items-center">
+        <h3 class="text-base font-bold text-slate-900 dark:text-white">Reset Your Password</h3>
+        <button type="button" onclick="closeForgotModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-lg font-bold">&times;</button>
+      </div>
+      <p class="text-xs text-slate-500 dark:text-slate-400">Enter your registered email address and we'll send you a password reset link.</p>
+      
+      <div id="forgotAlert" class="hidden p-3 rounded-xl text-xs font-medium"></div>
+
+      <form id="forgotForm" class="space-y-3">
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1">Email</label>
+          <input type="email" id="forgotEmail" required placeholder="you@example.com" class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+        </div>
+        <div class="flex justify-end gap-2 pt-2">
+          <button type="button" onclick="closeForgotModal()" class="px-4 py-2 text-xs font-bold text-slate-600 dark:text-slate-400">Cancel</button>
+          <button type="submit" id="btnForgotSubmit" class="px-4 py-2 text-xs font-bold bg-indigo-600 text-white rounded-xl shadow-md shadow-indigo-500/20">Send Reset Email</button>
+        </div>
+      </form>
+
+      <div id="forgotDirectLinkBox" class="hidden pt-3 border-t border-slate-100 dark:border-slate-800 text-center space-y-2">
+        <p class="text-[11px] text-slate-500 dark:text-slate-400">Direct Link (Local Development):</p>
+        <a id="directResetLink" href="#" class="inline-block text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline break-all">Open Reset Page &rarr;</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="glass-card border-t border-indigo-100/60 py-5 text-center text-xs text-slate-500">
+    <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-2">
+      <div>HSBLearn &copy; 2026 &middot; Educational AI Learning Platform</div>
+      <div class="text-[11px] text-slate-400">Grounded Citations &middot; Isolated Study Spaces &middot; Real Progress Tracking</div>
+    </div>
+  </footer>
+
+  <script src="/static/js/app.js"></script>
+  <script>
+    let isRegisterMode = false;
+
+    function toggleAuthMode() {
+      isRegisterMode = !isRegisterMode;
+      const loginForm = document.getElementById('loginForm');
+      const registerForm = document.getElementById('registerForm');
+      const toggleBtn = document.getElementById('toggleAuthBtn');
+      const alertBox = document.getElementById('alertBox');
+      alertBox.className = 'hidden';
+
+      if (isRegisterMode) {
+        loginForm.classList.add('hidden');
+        registerForm.classList.remove('hidden');
+        toggleBtn.innerText = "Already have an account? Sign In";
+      } else {
+        loginForm.classList.remove('hidden');
+        registerForm.classList.add('hidden');
+        toggleBtn.innerText = "Don't have an account? Register here";
+      }
+    }
+
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value.trim();
+      const alertBox = document.getElementById('alertBox');
+      const submitBtn = document.getElementById('submitBtn');
+
+      alertBox.className = 'hidden';
+      submitBtn.disabled = true;
+      submitBtn.innerText = 'Signing in...';
+
+      try {
+        const res = await apiRequest('/auth/login', {
+          method: 'POST',
+          body: JSON.stringify({ email, password })
+        });
+        if (res && res.access_token) {
+          setAuth(res.access_token, res.user);
+          if (res.user.role === 'instructor') {
+            window.location.href = '/static/instructor.html';
+          } else {
+            window.location.href = '/static/student.html';
+          }
+        }
+      } catch (err) {
+        alertBox.className = 'mb-4 p-3 rounded-xl text-xs bg-rose-50 text-rose-700 border border-rose-200/80 font-semibold';
+        alertBox.innerText = err.message || 'Login failed. Please check credentials.';
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerText = 'Sign In →';
+      }
+    });
+
+    document.getElementById('registerForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = document.getElementById('regName').value.trim();
+      const email = document.getElementById('regEmail').value.trim();
+      const password = document.getElementById('regPassword').value.trim();
+      const role = document.getElementById('regRole').value;
+      const alertBox = document.getElementById('alertBox');
+      const submitBtn = document.getElementById('regSubmitBtn');
+
+      alertBox.className = 'hidden';
+      submitBtn.disabled = true;
+      submitBtn.innerText = 'Creating account...';
+
+      try {
+        const res = await apiRequest('/auth/register', {
+          method: 'POST',
+          body: JSON.stringify({ name, email, password, role })
+        });
+        if (res && res.access_token) {
+          setAuth(res.access_token, res.user);
+          if (res.user.role === 'instructor') {
+            window.location.href = '/static/instructor.html';
+          } else {
+            window.location.href = '/static/student.html';
+          }
+        }
+      } catch (err) {
+        alertBox.className = 'mb-4 p-3 rounded-xl text-xs bg-rose-50 text-rose-700 border border-rose-200/80 font-semibold';
+        alertBox.innerText = err.message || 'Registration failed.';
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerText = 'Create Account →';
+      }
+    });
+
+    function openForgotModal() {
+      document.getElementById('forgotModal').classList.remove('hidden');
+      document.getElementById('forgotAlert').className = 'hidden';
+      document.getElementById('forgotDirectLinkBox').classList.add('hidden');
+    }
+
+    function closeForgotModal() {
+      document.getElementById('forgotModal').classList.add('hidden');
+    }
+
+    document.getElementById('forgotForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('forgotEmail').value.trim();
+      const alertBox = document.getElementById('forgotAlert');
+      const submitBtn = document.getElementById('btnForgotSubmit');
+      const linkBox = document.getElementById('forgotDirectLinkBox');
+      const directLink = document.getElementById('directResetLink');
+
+      alertBox.className = 'hidden';
+      linkBox.classList.add('hidden');
+      submitBtn.disabled = true;
+      submitBtn.innerText = 'Sending...';
+
+      try {
+        const res = await apiRequest('/auth/forgot-password', {
+          method: 'POST',
+          body: JSON.stringify({ email })
+        });
+        alertBox.className = 'p-3 rounded-xl text-xs bg-emerald-50 text-emerald-800 border border-emerald-200 font-semibold';
+        alertBox.innerText = res.message || 'Password reset instructions dispatched.';
+
+        if (res.reset_link) {
+          directLink.href = res.reset_link;
+          linkBox.classList.remove('hidden');
+        }
+      } catch (err) {
+        alertBox.className = 'p-3 rounded-xl text-xs bg-rose-50 text-rose-700 border border-rose-200 font-semibold';
+        alertBox.innerText = err.message || 'Could not send reset instructions.';
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerText = 'Send Reset Email';
+      }
+    });
+  </script>
+</body>
+</html>

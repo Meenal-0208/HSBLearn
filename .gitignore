@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+
+# Environment secrets
+.env
+.env.local
+*.env
+
+# SQLite Database & storage
+data/*.db
+data/*.sqlite
+data/*.sqlite3
+hsblearn.db
+
+# User Uploads
+uploads/*
+!uploads/.gitkeep
+
+# IDE & Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store

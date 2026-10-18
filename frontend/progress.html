@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Progress & Analytics - HSBLearn</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+    .dark .glass-card {
+      background: rgba(15, 23, 42, 0.9);
+      border-color: rgba(51, 65, 85, 0.8);
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-slate-50 via-indigo-50/20 to-purple-50/20 dark:from-slate-950 dark:via-slate-900 dark:to-indigo-950/40 min-h-screen text-slate-800 dark:text-slate-100 flex flex-col transition-colors duration-200">
+  <!-- Nav -->
+  <header class="glass-card border-b border-indigo-100/80 dark:border-slate-800 sticky top-0 z-50 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+      <div class="flex items-center space-x-6">
+        <div class="flex items-center space-x-3">
+          <img src="/static/logo.png" alt="HSB Logo" class="h-8 w-auto object-contain rounded-md">
+          <a href="/static/student.html" class="text-xl font-extrabold bg-gradient-to-r from-blue-700 via-indigo-600 to-purple-600 dark:from-blue-400 dark:via-indigo-300 dark:to-purple-300 bg-clip-text text-transparent">HSBLearn</a>
+        </div>
+        <nav class="hidden md:flex space-x-1 text-sm font-semibold">
+          <a href="/static/student.html" class="px-3 py-1.5 rounded-lg text-slate-600 dark:text-slate-300 hover:text-indigo-600 hover:bg-slate-50 dark:hover:bg-slate-800 transition">Dashboard</a>
+          <a href="/static/study-space.html" class="px-3 py-1.5 rounded-lg text-slate-600 dark:text-slate-300 hover:text-indigo-600 hover:bg-slate-50 dark:hover:bg-slate-800 transition">My Study Space</a>
+          <a href="/static/progress.html" class="px-3 py-1.5 rounded-lg bg-indigo-50 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300">Progress & Analytics</a>
+        </nav>
+      </div>
+      <div class="flex items-center space-x-3">
+        <button onclick="toggleTheme()" class="theme-toggle-btn px-2.5 py-1.5 rounded-xl text-xs font-bold bg-white/80 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition shadow-sm flex items-center space-x-1">
+          🌙 <span class="hidden sm:inline text-xs">Dark</span>
+        </button>
+        <button onclick="logout()" class="text-xs bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 py-1.5 px-3 rounded-lg font-semibold transition border border-slate-200 dark:border-slate-700">
+          Sign Out
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Body -->
+  <main class="max-w-7xl mx-auto px-4 py-8 flex-grow w-full space-y-8">
+    <div>
+      <span class="text-xs font-bold uppercase tracking-wider text-indigo-600">Learning Analytics</span>
+      <h1 class="text-3xl font-extrabold text-slate-900 mt-1">Progress & Mastery Dashboard</h1>
+      <p class="text-sm text-slate-500 mt-1">Separates material coverage from demonstrated quiz understanding and active revision.</p>
+    </div>
+
+    <!-- 3 Core Metrics -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-sm space-y-3 relative overflow-hidden">
+        <div class="w-1.5 h-full bg-gradient-to-b from-blue-500 to-indigo-600 absolute left-0 top-0"></div>
+        <div class="flex justify-between items-center pl-1">
+          <span class="text-xs font-bold uppercase tracking-wider text-slate-400">1. Content Coverage</span>
+          <span class="text-xs bg-blue-50 text-blue-700 font-bold px-2.5 py-0.5 rounded-full border border-blue-200">Activity</span>
+        </div>
+        <div class="text-4xl font-extrabold text-slate-900 pl-1" id="covPct">0%</div>
+        <p class="text-xs text-slate-500 leading-relaxed pl-1">
+          Completed eligible resources divided by total accessible course & personal documents.
+        </p>
+        <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
+          <div id="covBar" class="bg-gradient-to-r from-blue-500 to-indigo-600 h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+        </div>
+      </div>
+
+      <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-sm space-y-3 relative overflow-hidden">
+        <div class="w-1.5 h-full bg-gradient-to-b from-purple-500 to-pink-500 absolute left-0 top-0"></div>
+        <div class="flex justify-between items-center pl-1">
+          <span class="text-xs font-bold uppercase tracking-wider text-slate-400">2. Quiz Understanding</span>
+          <span class="text-xs bg-purple-50 text-purple-700 font-bold px-2.5 py-0.5 rounded-full border border-purple-200">Assessment</span>
+        </div>
+        <div class="text-4xl font-extrabold text-slate-900 pl-1" id="quizAvg">0%</div>
+        <p class="text-xs text-slate-500 leading-relaxed pl-1">
+          Average score across all submitted practice quizzes grounded in your sources.
+        </p>
+        <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
+          <div id="quizBar" class="bg-gradient-to-r from-purple-500 to-pink-500 h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+        </div>
+      </div>
+
+      <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-sm space-y-3 relative overflow-hidden">
+        <div class="w-1.5 h-full bg-gradient-to-b from-amber-400 to-orange-500 absolute left-0 top-0"></div>
+        <div class="flex justify-between items-center pl-1">
+          <span class="text-xs font-bold uppercase tracking-wider text-slate-400">3. Active Revision</span>
+          <span class="text-xs bg-amber-50 text-amber-700 font-bold px-2.5 py-0.5 rounded-full border border-amber-200">Synthesis</span>
+        </div>
+        <div class="text-4xl font-extrabold text-slate-900 pl-1" id="revCount">0</div>
+        <p class="text-xs text-slate-500 leading-relaxed pl-1">
+          Number of generated quick revision sheets, formula recaps, and cheat sheets reviewed.
+        </p>
+        <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
+          <div id="revBar" class="bg-gradient-to-r from-amber-400 to-orange-500 h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quiz History -->
+    <section class="space-y-4">
+      <h3 class="text-lg font-extrabold text-slate-900">Quiz Attempt History</h3>
+      <div id="quizHistoryList" class="bg-white border border-slate-200/80 rounded-2xl divide-y divide-slate-100 shadow-sm overflow-hidden">
+        <div class="p-6 text-center text-xs text-slate-400">Loading quiz history...</div>
+      </div>
+    </section>
+
+    <!-- Recent Study Activities -->
+    <section class="space-y-4">
+      <h3 class="text-lg font-extrabold text-slate-900">Recent Activity Log</h3>
+      <div id="activityLog" class="bg-white border border-slate-200/80 rounded-2xl divide-y divide-slate-100 shadow-sm overflow-hidden">
+        <div class="p-6 text-center text-xs text-slate-400">Loading activity log...</div>
+      </div>
+    </section>
+  </main>
+
+  <script src="/static/js/app.js"></script>
+  <script src="/static/js/progress.js"></script>
+</body>
+</html>

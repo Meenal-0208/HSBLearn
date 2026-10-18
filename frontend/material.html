@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Study Material & AI Workspace - HSBLearn</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+    .dark .glass-card {
+      background: rgba(15, 23, 42, 0.9);
+      border-color: rgba(51, 65, 85, 0.8);
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-slate-50 via-indigo-50/20 to-purple-50/20 dark:from-slate-950 dark:via-slate-900 dark:to-indigo-950/40 min-h-screen text-slate-800 dark:text-slate-100 flex flex-col transition-colors duration-200">
+  <!-- Top Nav -->
+  <header class="glass-card border-b border-indigo-100/80 dark:border-slate-800 sticky top-0 z-50 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+      <div class="flex items-center space-x-3">
+        <img src="/static/logo.png" alt="HSB Logo" class="h-8 w-auto object-contain rounded-md">
+        <a href="/static/student.html" class="text-xl font-extrabold bg-gradient-to-r from-blue-700 via-indigo-600 to-purple-600 dark:from-blue-400 dark:via-indigo-300 dark:to-purple-300 bg-clip-text text-transparent">HSBLearn</a>
+        <span class="text-xs font-bold px-3 py-1 rounded-full bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-950/50 dark:to-purple-950/50 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">✨ AI Workspace</span>
+      </div>
+      <div class="flex items-center space-x-3">
+        <button onclick="toggleTheme()" class="theme-toggle-btn px-2.5 py-1.5 rounded-xl text-xs font-bold bg-white/80 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition shadow-sm flex items-center space-x-1">
+          🌙 <span class="hidden sm:inline text-xs">Dark</span>
+        </button>
+        <button onclick="window.history.back()" class="text-xs text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 font-bold">&larr; Back</button>
+        <button onclick="logout()" class="text-xs bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 py-1.5 px-3 rounded-lg font-semibold transition border border-slate-200 dark:border-slate-700">
+          Sign Out
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Body -->
+  <main class="max-w-7xl mx-auto px-4 py-8 flex-grow w-full space-y-6">
+    <!-- Material Banner -->
+    <div class="bg-white border border-slate-200/80 rounded-3xl p-6 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative overflow-hidden">
+      <div class="w-2 h-full bg-gradient-to-b from-indigo-500 via-purple-500 to-pink-500 absolute left-0 top-0"></div>
+      <div class="pl-3">
+        <div class="flex items-center space-x-2 text-xs font-bold text-indigo-600 uppercase tracking-wider">
+          <span id="matVisibility">Material</span>
+          <span>&middot;</span>
+          <span id="matExtractionStatus" class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-bold text-[10px] capitalize">Ready</span>
+        </div>
+        <h1 class="text-2xl font-extrabold text-slate-900 mt-1" id="matFileName">Document Name</h1>
+        <p class="text-xs text-slate-500 mt-1" id="matMetaDetails">0 KB &middot; 0 extracted passages ready for AI</p>
+      </div>
+      <div class="flex items-center space-x-3">
+        <div class="flex items-center space-x-2 bg-slate-50 border border-slate-200 px-3.5 py-2 rounded-xl">
+          <label class="text-xs font-bold text-slate-600">Status:</label>
+          <select id="activityStatusSelect" onchange="onStatusChanged()" class="text-xs font-bold bg-transparent focus:outline-none text-indigo-700 cursor-pointer">
+            <option value="not_started">⚪ Not Started</option>
+            <option value="in_progress">🟡 In Progress</option>
+            <option value="completed">🟢 Marked as Read</option>
+          </select>
+        </div>
+        <a id="btnDownloadMat" href="#" download class="text-xs bg-slate-900 hover:bg-slate-800 text-white font-bold px-4 py-2.5 rounded-xl transition shadow-sm">
+          Download Original
+        </a>
+      </div>
+    </div>
+
+    <!-- AI Tools Tabs -->
+    <div class="bg-white border border-slate-200/80 rounded-3xl shadow-sm overflow-hidden">
+      <div class="border-b border-slate-100 flex overflow-x-auto bg-slate-50/60 p-2 gap-2">
+        <button onclick="switchTab('notes')" id="tab-notes" class="px-5 py-2.5 text-xs font-bold rounded-xl bg-white text-indigo-600 shadow-sm transition">
+          📝 AI Study Notes
+        </button>
+        <button onclick="switchTab('revision')" id="tab-revision" class="px-5 py-2.5 text-xs font-bold rounded-xl text-slate-500 hover:text-slate-900 transition">
+          ⚡ Quick Revision Sheet
+        </button>
+        <button onclick="switchTab('ask')" id="tab-ask" class="px-5 py-2.5 text-xs font-bold rounded-xl text-slate-500 hover:text-slate-900 transition">
+          💬 Grounded AI Tutor
+        </button>
+        <button onclick="switchTab('quiz')" id="tab-quiz" class="px-5 py-2.5 text-xs font-bold rounded-xl text-slate-500 hover:text-slate-900 transition">
+          🎯 Practice Quiz
+        </button>
+        <button onclick="switchTab('videos')" id="tab-videos" class="px-5 py-2.5 text-xs font-bold rounded-xl text-slate-500 hover:text-slate-900 transition">
+          📺 Video Recommendations
+        </button>
+      </div>
+
+      <!-- Tab 1: AI Study Notes -->
+      <div id="panel-notes" class="p-6 space-y-6">
+        <div class="flex flex-wrap items-center justify-between gap-4 bg-gradient-to-r from-indigo-50/60 to-purple-50/40 p-4 rounded-2xl border border-indigo-100">
+          <div class="flex items-center space-x-3">
+            <span class="text-xs font-bold text-slate-700">Style:</span>
+            <label class="text-xs text-slate-600 flex items-center space-x-1 cursor-pointer">
+              <input type="radio" name="noteStyle" value="detailed" checked class="text-indigo-600">
+              <span class="font-semibold">Detailed & Explanatory</span>
+            </label>
+            <label class="text-xs text-slate-600 flex items-center space-x-1 cursor-pointer">
+              <input type="radio" name="noteStyle" value="concise" class="text-indigo-600">
+              <span class="font-semibold">Concise Summary</span>
+            </label>
+          </div>
+          <button onclick="triggerGenerateNotes()" id="btnGenNotes" class="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-md shadow-indigo-500/20 transition transform hover:-translate-y-0.5">
+            ✨ Generate Grounded Notes
+          </button>
+        </div>
+        <div id="notesOutput" class="bg-slate-50/40 border border-slate-200/80 rounded-2xl p-6 min-h-[300px] text-slate-800 text-sm leading-relaxed whitespace-pre-wrap font-sans">
+          Click "Generate Grounded Notes" to create comprehensive, source-grounded study notes.
+        </div>
+      </div>
+
+      <!-- Tab 2: Quick Revision Sheet -->
+      <div id="panel-revision" class="p-6 space-y-6 hidden">
+        <div class="flex items-center justify-between bg-gradient-to-r from-emerald-50/60 to-teal-50/40 p-4 rounded-2xl border border-emerald-100">
+          <div>
+            <h4 class="text-sm font-bold text-emerald-950">Exam Cheat Sheet & Formula Recaps</h4>
+            <p class="text-xs text-emerald-700">Fast memory anchors, comparisons, and key definitions.</p>
+          </div>
+          <button onclick="triggerGenerateRevision()" id="btnGenRevision" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-md shadow-emerald-500/20 transition transform hover:-translate-y-0.5">
+            ⚡ Generate Revision Sheet
+          </button>
+        </div>
+        <div id="revisionOutput" class="bg-slate-50/40 border border-slate-200/80 rounded-2xl p-6 min-h-[300px] text-slate-800 text-sm leading-relaxed whitespace-pre-wrap font-sans">
+          Click "Generate Revision Sheet" to produce a fast exam recap.
+        </div>
+      </div>
+
+      <!-- Tab 3: Grounded AI Tutor -->
+      <div id="panel-ask" class="p-6 space-y-6 hidden">
+        <div class="space-y-3">
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-500">Ask Grounded Question</label>
+          <div class="flex gap-2">
+            <input type="text" id="tutorQuery" placeholder="e.g. What is the difference between paging and segmentation?" class="flex-grow px-4 py-3 bg-slate-50/70 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition">
+            <button onclick="askTutorQuestion()" id="btnAskTutor" class="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white text-xs font-bold px-6 py-3 rounded-xl shadow-md shadow-indigo-500/20 transition transform hover:-translate-y-0.5">
+              Ask AI
+            </button>
+          </div>
+        </div>
+
+        <div id="tutorAnswerContainer" class="hidden space-y-4">
+          <div class="bg-gradient-to-br from-indigo-50/80 to-purple-50/60 border border-indigo-100 rounded-2xl p-6">
+            <h4 class="text-xs font-bold text-indigo-700 uppercase tracking-wider mb-2">Answer (Source-Grounded)</h4>
+            <div id="tutorAnswerText" class="text-sm text-slate-800 leading-relaxed whitespace-pre-wrap"></div>
+          </div>
+          <div id="tutorCitations" class="space-y-2">
+            <h5 class="text-xs font-bold uppercase tracking-wider text-slate-500">Source Citations</h5>
+            <div id="citationsList" class="space-y-2"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 4: Practice Quiz -->
+      <div id="panel-quiz" class="p-6 space-y-6 hidden">
+        <div class="flex items-center justify-between bg-gradient-to-r from-purple-50/60 to-pink-50/40 p-4 rounded-2xl border border-purple-100">
+          <div>
+            <h4 class="text-sm font-bold text-purple-950">AI Practice Quiz</h4>
+            <p class="text-xs text-purple-700">Test your mastery of concepts from this document with objective auto-grading.</p>
+          </div>
+          <button onclick="generateMaterialQuiz()" class="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-md shadow-purple-500/20 transition transform hover:-translate-y-0.5">
+            🎯 Generate & Start Quiz &rarr;
+          </button>
+        </div>
+      </div>
+
+      <!-- Tab 5: YouTube Recommendations -->
+      <div id="panel-videos" class="p-6 space-y-6 hidden">
+        <div class="flex items-center justify-between bg-gradient-to-r from-rose-50/60 to-red-50/40 p-4 rounded-2xl border border-rose-100">
+          <div>
+            <h4 class="text-sm font-bold text-rose-950">Recommended Video Lectures</h4>
+            <p class="text-xs text-rose-700">Real video lectures matching topics derived from this document.</p>
+          </div>
+          <button onclick="loadVideoRecommendations()" id="btnFetchVideos" class="bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-md shadow-rose-500/20 transition">
+            Search YouTube
+          </button>
+        </div>
+        <div id="videosList" class="space-y-3">
+          <div class="p-8 text-center text-sm text-slate-400">Click "Search YouTube" to find lectures.</div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="/static/js/app.js"></script>
+  <script src="/static/js/material.js"></script>
+  <script>
+    // Colorful active tab helper
+    const originalSwitchTab = window.switchTab;
+    window.switchTab = function(tab) {
+      ['notes', 'revision', 'ask', 'quiz', 'videos'].forEach(t => {
+        const btn = document.getElementById(`tab-${t}`);
+        btn.className = 'px-5 py-2.5 text-xs font-bold rounded-xl text-slate-500 hover:text-slate-900 transition';
+        document.getElementById(`panel-${t}`).classList.add('hidden');
+      });
+      const activeBtn = document.getElementById(`tab-${tab}`);
+      activeBtn.className = 'px-5 py-2.5 text-xs font-bold rounded-xl bg-indigo-600 text-white shadow-md shadow-indigo-500/20 transition';
+      document.getElementById(`panel-${tab}`).classList.remove('hidden');
+    }
+  </script>
+</body>
+</html>
