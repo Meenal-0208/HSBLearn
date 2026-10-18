@@ -245,9 +245,42 @@ def init_db():
 
 def seed_demo_data():
     """
-    No fake demo data is inserted. Real data is created through user registration and course creation.
+    Seeds authorized student logins (2026mbapm001@hsb.edu.in to 2026mbapm039@hsb.edu.in)
+    and instructor logins (amanraj@hsb.edu.in, kusum@hsb.edu.in) with default password '123456'.
     """
-    pass
+    import hashlib
+    default_password_hash = hashlib.sha256(b"hsblearn_salt_123456").hexdigest()
+
+    # Pre-authorized Instructors
+    instructors = [
+        ("Prof. Aman Raj", "amanraj@hsb.edu.in"),
+        ("Prof. Kusum", "kusum@hsb.edu.in")
+    ]
+
+    # Pre-authorized Students: 2026mbapm001 to 2026mbapm039
+    students = [
+        (f"Student {i:03d}", f"2026mbapm{i:03d}@hsb.edu.in")
+        for i in range(1, 40)
+    ]
+
+    with get_db() as conn:
+        cursor = conn.cursor()
+
+        for name, email in instructors:
+            cursor.execute("SELECT id FROM users WHERE email = ?", (email,))
+            if not cursor.fetchone():
+                cursor.execute("""
+                    INSERT INTO users (name, email, password_hash, role)
+                    VALUES (?, ?, ?, 'instructor')
+                """, (name, email, default_password_hash))
+
+        for name, email in students:
+            cursor.execute("SELECT id FROM users WHERE email = ?", (email,))
+            if not cursor.fetchone():
+                cursor.execute("""
+                    INSERT INTO users (name, email, password_hash, role)
+                    VALUES (?, ?, ?, 'student')
+                """, (name, email, default_password_hash))
 
 if __name__ == "__main__":
     init_db()
