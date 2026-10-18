@@ -49,7 +49,10 @@ from backend.services.progress_service import (
 
 # Initialize Storage directories
 BASE_DIR = Path(__file__).resolve().parent.parent
-UPLOAD_DIR = BASE_DIR / "uploads"
+if os.getenv("VERCEL"):
+    UPLOAD_DIR = Path("/tmp/uploads")
+else:
+    UPLOAD_DIR = BASE_DIR / "uploads"
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 FRONTEND_DIR = BASE_DIR / "frontend"
 

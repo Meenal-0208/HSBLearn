@@ -6,10 +6,15 @@ import os
 from pathlib import Path
 from contextlib import contextmanager
 
-# Default database location inside data/ directory
+# Default database location inside data/ directory (or /tmp on serverless environments like Vercel)
 BASE_DIR = Path(__file__).resolve().parent.parent
-DATA_DIR = BASE_DIR / "data"
-DB_PATH = DATA_DIR / "hsblearn.db"
+
+if os.getenv("VERCEL"):
+    DATA_DIR = Path("/tmp/data")
+    DB_PATH = Path("/tmp/hsblearn.db")
+else:
+    DATA_DIR = BASE_DIR / "data"
+    DB_PATH = DATA_DIR / "hsblearn.db"
 
 # Ensure data directory exists
 DATA_DIR.mkdir(parents=True, exist_ok=True)
