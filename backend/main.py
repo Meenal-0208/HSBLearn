@@ -396,12 +396,8 @@ def delete_personal_folder(folder_id: int, user: dict = Depends(get_current_user
 # 4. Materials Upload & Management (Shared & Study Space)
 # -------------------------------------------------------------
 
-ALLOWED_EXTENSIONS = {".pdf", ".docx", ".doc", ".pptx", ".ppt", ".txt", ".md"}
-
 def save_uploaded_file(file: UploadFile) -> str:
     ext = Path(file.filename).suffix.lower()
-    if ext not in ALLOWED_EXTENSIONS:
-        raise HTTPException(status_code=400, detail=f"Unsupported file format '{ext}'. Allowed: PDF, DOCX, PPTX, TXT")
     
     unique_filename = f"{uuid.uuid4().hex}_{Path(file.filename).name}"
     storage_path = UPLOAD_DIR / unique_filename
