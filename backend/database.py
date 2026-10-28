@@ -9,6 +9,9 @@ from contextlib import contextmanager
 # Default database location inside data/ directory (or /tmp on serverless environments like Vercel)
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+TURSO_DATABASE_URL = os.getenv("TURSO_DATABASE_URL")
+TURSO_AUTH_TOKEN = os.getenv("TURSO_AUTH_TOKEN")
+
 if os.getenv("VERCEL"):
     DATA_DIR = Path("/tmp/data")
     DB_PATH = Path("/tmp/hsblearn.db")
@@ -19,11 +22,122 @@ else:
 # Ensure data directory exists
 DATA_DIR.mkdir(parents=True, exist_ok=True)
 
-def get_db_connection() -> sqlite3.Connection:
+class LibsqlRow:
+    """Provides sqlite3.Row-like dictionary and index access for libsql rows."""
+    def __init__(self, cols, values):
+        self._d = dict(zip(cols, values))
+        self._v = tuple(values)
+
+    def __getitem__(self, key):
+        if isinstance(key, str):
+            return self._d[key]
+        return self._v[key]
+
+    def get(self, key, default=None):
+        return self._d.get(key, default)
+
+    def keys(self):
+        return self._d.keys()
+
+    def values(self):
+        return self._d.values()
+
+    def items(self):
+        return self._d.items()
+
+    def __iter__(self):
+        return iter(self._d)
+
+    def __len__(self):
+        return len(self._v)
+
+    def __repr__(self):
+        return repr(self._d)
+
+class LibsqlCursorWrapper:
+    """Wraps a libsql cursor to return LibsqlRow instances with dict-like access."""
+    def __init__(self, cursor):
+        self._cur = cursor
+
+    @property
+    def lastrowid(self):
+        return getattr(self._cur, "lastrowid", None)
+
+    @property
+    def rowcount(self):
+        return getattr(self._cur, "rowcount", -1)
+
+    @property
+    def description(self):
+        return self._cur.description
+
+    def execute(self, sql, params=()):
+        self._cur.execute(sql, params)
+        return self
+
+    def executemany(self, sql, seq_of_params):
+        self._cur.executemany(sql, seq_of_params)
+        return self
+
+    def executescript(self, sql_script):
+        if hasattr(self._cur, "executescript"):
+            return self._cur.executescript(sql_script)
+        for stmt in sql_script.split(";"):
+            stmt = stmt.strip()
+            if stmt:
+                self._cur.execute(stmt)
+        return self
+
+    def _wrap_row(self, row):
+        if row is None:
+            return None
+        cols = [c[0] for c in self._cur.description] if self._cur.description else []
+        return LibsqlRow(cols, row)
+
+    def fetchone(self):
+        row = self._cur.fetchone()
+        return self._wrap_row(row)
+
+    def fetchall(self):
+        rows = self._cur.fetchall()
+        if not rows:
+            return []
+        cols = [c[0] for c in self._cur.description] if self._cur.description else []
+        return [LibsqlRow(cols, r) for r in rows]
+
+class LibsqlConnectionWrapper:
+    """Wraps a libsql connection to provide standard sqlite3 cursor and commit semantics."""
+    def __init__(self, conn):
+        self._conn = conn
+
+    def cursor(self):
+        return LibsqlCursorWrapper(self._conn.cursor())
+
+    def execute(self, sql, params=()):
+        cur = self.cursor()
+        cur.execute(sql, params)
+        return cur
+
+    def commit(self):
+        self._conn.commit()
+
+    def rollback(self):
+        if hasattr(self._conn, "rollback"):
+            self._conn.rollback()
+
+    def close(self):
+        self._conn.close()
+
+def get_db_connection():
     """
-    Returns an SQLite connection configured with ROW factory
+    Returns an SQLite or LibSQL connection configured with row access
     and foreign key constraints enabled.
     """
+    if TURSO_DATABASE_URL and TURSO_AUTH_TOKEN:
+        import libsql
+        conn = libsql.connect(database=TURSO_DATABASE_URL, auth_token=TURSO_AUTH_TOKEN)
+        return LibsqlConnectionWrapper(conn)
+
     conn = sqlite3.connect(str(DB_PATH), check_same_thread=False)
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA foreign_keys = ON;")
