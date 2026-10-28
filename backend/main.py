@@ -285,6 +285,14 @@ def update_course(course_id: int, req: CourseUpdateRequest, user: dict = Depends
         cursor.execute("SELECT c.*, u.name as instructor_name FROM courses c JOIN users u ON c.instructor_id = u.id WHERE c.id = ?", (course_id,))
         return dict(cursor.fetchone())
 
+@app.delete("/api/courses/{course_id}")
+def delete_course(course_id: int, user: dict = Depends(get_current_user)):
+    verify_course_owner(user, course_id)
+    with get_db() as conn:
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM courses WHERE id = ?", (course_id,))
+        return {"status": "ok", "message": f"Course {course_id} and associated materials deleted successfully."}
+
 @app.post("/api/courses/{course_id}/chapters", response_model=ChapterResponse)
 def create_chapter(course_id: int, req: ChapterCreateRequest, user: dict = Depends(get_current_user)):
     verify_course_owner(user, course_id)

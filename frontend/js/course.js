@@ -183,6 +183,19 @@ async function deleteMat(matId) {
   }
 }
 
+async function handleDeleteCurrentCourse() {
+  const title = document.getElementById('courseTitle').innerText || 'this course';
+  if (!confirm(`Are you sure you want to permanently delete "${title}"? All chapters and materials will be deleted.`)) {
+    return;
+  }
+  try {
+    await apiRequest(`/courses/${courseId}`, { method: 'DELETE' });
+    window.location.href = '/static/instructor.html';
+  } catch (err) {
+    alert(err.message || 'Failed to delete course');
+  }
+}
+
 function openChapterModal() { document.getElementById('chapterModal').classList.remove('hidden'); }
 function closeChapterModal() { document.getElementById('chapterModal').classList.add('hidden'); }
 function openUploadModal() { document.getElementById('uploadModal').classList.remove('hidden'); }

@@ -54,14 +54,33 @@ async function loadInstructorCourses() {
         </div>
         <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
           <span class="text-xs text-slate-500">${c.total_chapters || 0} chapters &middot; ${c.total_materials || 0} files</span>
-          <a href="/static/course.html?id=${c.id}" class="text-sm font-semibold text-indigo-600 hover:text-indigo-800">
-            Manage Content &rarr;
-          </a>
+          <div class="flex items-center space-x-2">
+            <a href="/static/course.html?id=${c.id}" class="text-sm font-semibold text-indigo-600 hover:text-indigo-800">
+              Manage Content &rarr;
+            </a>
+            <button onclick="deleteCourse(${c.id}, '${c.title.replace(/'/g, "\\'")}')" class="text-xs bg-rose-50 hover:bg-rose-100 text-rose-600 font-semibold px-2.5 py-1 rounded-lg border border-rose-200 transition">
+              Delete
+            </button>
+          </div>
         </div>
       </div>
     `).join('');
   } catch (err) {
     listEl.innerHTML = `<div class="col-span-full text-red-500 text-sm p-4">${err.message}</div>`;
+  }
+}
+
+async function deleteCourse(courseId, courseTitle) {
+  if (!confirm(`Are you sure you want to delete "${courseTitle}"? All chapters, materials, and quizzes will be deleted permanently.`)) {
+    return;
+  }
+  try {
+    await apiRequest(`/courses/${courseId}`, {
+      method: 'DELETE'
+    });
+    await loadInstructorCourses();
+  } catch (err) {
+    alert(err.message || 'Failed to delete course');
   }
 }
 
