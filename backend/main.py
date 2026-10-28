@@ -14,7 +14,7 @@ from fastapi import (
 )
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse, RedirectResponse
+from fastapi.responses import FileResponse, RedirectResponse, Response
 
 from backend.database import get_db, init_db, seed_demo_data
 from backend.models import (
@@ -443,8 +443,13 @@ async def upload_course_materials(
     uploaded_records = []
 
     for file in files:
-        storage_path = save_uploaded_file(file)
-        file_size = os.path.getsize(storage_path)
+        file_bytes = await file.read()
+        unique_filename = f"{uuid.uuid4().hex}_{Path(file.filename).name}"
+        storage_path = str(UPLOAD_DIR / unique_filename)
+        with open(storage_path, "wb") as buffer:
+            buffer.write(file_bytes)
+
+        file_size = len(file_bytes)
         ext = Path(file.filename).suffix.lower()
 
         with get_db() as conn:
@@ -452,9 +457,9 @@ async def upload_course_materials(
             cursor.execute("""
                 INSERT INTO materials (
                     uploader_id, course_id, chapter_id, personal_folder_id,
-                    file_name, file_type, storage_path, file_size, visibility, extraction_status
-                ) VALUES (?, ?, ?, NULL, ?, ?, ?, ?, 'course', 'pending')
-            """, (user["id"], course_id, chapter_id, file.filename, ext, storage_path, file_size))
+                    file_name, file_type, storage_path, file_size, visibility, extraction_status, file_data
+                ) VALUES (?, ?, ?, NULL, ?, ?, ?, ?, 'course', 'pending', ?)
+            """, (user["id"], course_id, chapter_id, file.filename, ext, storage_path, file_size, file_bytes))
             mat_id = cursor.lastrowid
             
         # Process extraction immediately for seamless demo/testing
@@ -498,8 +503,13 @@ async def upload_personal_materials(
 
     uploaded_records = []
     for file in files:
-        storage_path = save_uploaded_file(file)
-        file_size = os.path.getsize(storage_path)
+        file_bytes = await file.read()
+        unique_filename = f"{uuid.uuid4().hex}_{Path(file.filename).name}"
+        storage_path = str(UPLOAD_DIR / unique_filename)
+        with open(storage_path, "wb") as buffer:
+            buffer.write(file_bytes)
+
+        file_size = len(file_bytes)
         ext = Path(file.filename).suffix.lower()
 
         with get_db() as conn:
@@ -507,9 +517,9 @@ async def upload_personal_materials(
             cursor.execute("""
                 INSERT INTO materials (
                     uploader_id, course_id, chapter_id, personal_folder_id,
-                    file_name, file_type, storage_path, file_size, visibility, extraction_status
-                ) VALUES (?, NULL, NULL, ?, ?, ?, ?, ?, 'private', 'pending')
-            """, (user["id"], personal_folder_id, file.filename, ext, storage_path, file_size))
+                    file_name, file_type, storage_path, file_size, visibility, extraction_status, file_data
+                ) VALUES (?, NULL, NULL, ?, ?, ?, ?, ?, 'private', 'pending', ?)
+            """, (user["id"], personal_folder_id, file.filename, ext, storage_path, file_size, file_bytes))
             mat_id = cursor.lastrowid
 
         process_material_file(mat_id)
@@ -563,9 +573,36 @@ def get_material_detail(material_id: int, user: dict = Depends(get_current_user)
 def download_material(material_id: int, user: dict = Depends(get_current_user)):
     mat = verify_material_access(user, material_id)
     file_path = mat["storage_path"]
-    if not os.path.exists(file_path):
-        raise HTTPException(status_code=404, detail="File content missing on storage.")
-    return FileResponse(file_path, filename=mat["file_name"])
+    
+    # 1. If file exists on local container filesystem, stream it directly
+    if file_path and os.path.exists(file_path):
+        return FileResponse(file_path, filename=mat["file_name"])
+
+    # 2. If running on Vercel and the container restarted, fetch from permanent database BLOB
+    with get_db() as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT file_data FROM materials WHERE id = ?", (material_id,))
+        row = cursor.fetchone()
+        file_bytes = None
+        if row:
+            file_bytes = row["file_data"] if isinstance(row, dict) else row[0]
+            if file_bytes is None and hasattr(row, "get"):
+                file_bytes = row.get("file_data")
+
+        if file_bytes:
+            # Recreate local cache file for document extraction or future hits
+            try:
+                with open(file_path, "wb") as f:
+                    f.write(file_bytes)
+            except Exception:
+                pass
+            return Response(
+                content=file_bytes,
+                media_type="application/octet-stream",
+                headers={"Content-Disposition": f'attachment; filename="{mat["file_name"]}"'}
+            )
+
+    raise HTTPException(status_code=404, detail="File content missing on storage.")
 
 @app.delete("/api/materials/{material_id}")
 def delete_material(material_id: int, user: dict = Depends(get_current_user)):

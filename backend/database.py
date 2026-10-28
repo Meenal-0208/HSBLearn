@@ -264,6 +264,7 @@ def init_db():
             visibility TEXT CHECK(visibility IN ('course', 'private')) DEFAULT 'private',
             extraction_status TEXT CHECK(extraction_status IN ('pending', 'processing', 'ready', 'failed', 'unavailable')) DEFAULT 'pending',
             extracted_text_status TEXT DEFAULT '',
+            file_data BLOB,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (uploader_id) REFERENCES users(id) ON DELETE CASCADE,
             FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE,
@@ -271,6 +272,11 @@ def init_db():
             FOREIGN KEY (personal_folder_id) REFERENCES personal_folders(id) ON DELETE SET NULL
         );
         """)
+        # Safe migration if table already exists without file_data column
+        try:
+            cursor.execute("ALTER TABLE materials ADD COLUMN file_data BLOB")
+        except Exception:
+            pass
         cursor.execute("CREATE INDEX IF NOT EXISTS idx_materials_course ON materials(course_id);")
         cursor.execute("CREATE INDEX IF NOT EXISTS idx_materials_uploader ON materials(uploader_id);")
         cursor.execute("CREATE INDEX IF NOT EXISTS idx_materials_folder ON materials(personal_folder_id);")
