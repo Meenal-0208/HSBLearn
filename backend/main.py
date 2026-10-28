@@ -290,8 +290,27 @@ def delete_course(course_id: int, user: dict = Depends(get_current_user)):
     verify_course_owner(user, course_id)
     with get_db() as conn:
         cursor = conn.cursor()
+        
+        # 1. Fetch all storage files for materials in this course to delete them from disk
+        cursor.execute("SELECT id, storage_path FROM materials WHERE course_id = ?", (course_id,))
+        materials = cursor.fetchall() or []
+        for mat in materials:
+            sp = mat["storage_path"] if isinstance(mat, dict) else mat[1]
+            if sp and os.path.exists(sp):
+                try:
+                    os.remove(sp)
+                except Exception:
+                    pass
+
+        # 2. Explicitly delete child relations (guarantees clean deletion on both LibSQL and SQLite)
+        cursor.execute("DELETE FROM extracted_chunks WHERE material_id IN (SELECT id FROM materials WHERE course_id = ?)", (course_id,))
+        cursor.execute("DELETE FROM learning_activities WHERE course_id = ?", (course_id,))
+        cursor.execute("DELETE FROM course_access WHERE course_id = ?", (course_id,))
+        cursor.execute("DELETE FROM materials WHERE course_id = ?", (course_id,))
+        cursor.execute("DELETE FROM chapters WHERE course_id = ?", (course_id,))
         cursor.execute("DELETE FROM courses WHERE id = ?", (course_id,))
-        return {"status": "ok", "message": f"Course {course_id} and associated materials deleted successfully."}
+
+        return {"status": "ok", "message": f"Course {course_id} and all associated chapters, files, and data have been completely deleted."}
 
 @app.post("/api/courses/{course_id}/chapters", response_model=ChapterResponse)
 def create_chapter(course_id: int, req: ChapterCreateRequest, user: dict = Depends(get_current_user)):
