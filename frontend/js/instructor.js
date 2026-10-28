@@ -49,7 +49,7 @@ async function loadInstructorCourses() {
       <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 flex flex-col justify-between hover:border-indigo-300 transition">
         <div>
           <div class="flex items-center justify-between text-xs font-semibold text-indigo-600 uppercase tracking-wider mb-2">
-            <span>Course #${c.id}</span>
+            <span>Curriculum</span>
             <span class="px-2 py-0.5 rounded text-xs uppercase ${c.status === 'published' ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-700'}">${c.status}</span>
           </div>
           <h3 class="text-lg font-bold text-slate-900">${c.title}</h3>
@@ -114,7 +114,7 @@ function renderDeleteModalList() {
         <input type="checkbox" value="${c.id}" onchange="handleCourseSelectionChange(this, ${c.id})" ${selectedCourseIdsToDelete.has(c.id) ? 'checked' : ''} class="w-4 h-4 text-rose-600 rounded border-slate-300 focus:ring-rose-500">
         <div>
           <div class="text-sm font-semibold text-slate-800">${c.title}</div>
-          <div class="text-xs text-slate-400">Course #${c.id} &middot; ${c.total_chapters || 0} chapters &middot; ${c.total_materials || 0} files</div>
+          <div class="text-xs text-slate-400">${c.total_chapters || 0} chapters &middot; ${c.total_materials || 0} files</div>
         </div>
       </div>
       <span class="text-xs text-slate-400 uppercase font-semibold">${c.status}</span>

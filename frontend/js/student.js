@@ -42,7 +42,7 @@ async function loadEnrolledCourses() {
       <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm p-6 flex flex-col justify-between hover:border-indigo-400 dark:hover:border-indigo-600 transition">
         <div>
           <div class="flex items-center justify-between text-xs font-semibold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider mb-2">
-            <span>Course #${c.id}</span>
+            <span>Course</span>
             <span class="text-slate-400 font-normal">Instructor: ${c.instructor_name || 'Assigned'}</span>
           </div>
           <h3 class="text-lg font-bold text-slate-900 dark:text-white">${c.title}</h3>
