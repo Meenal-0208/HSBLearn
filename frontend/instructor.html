@@ -36,9 +36,14 @@
         <h1 class="text-2xl font-bold text-slate-900">Your Managed Courses</h1>
         <p class="text-sm text-slate-500">Create courses, manage chapters, upload lecture resources, and grant student access.</p>
       </div>
-      <button onclick="openCourseModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm px-4 py-2.5 rounded-lg shadow-sm transition">
-        + Create New Course
-      </button>
+      <div class="flex items-center gap-3">
+        <button onclick="openDeleteCoursesModal()" class="bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 font-medium text-sm px-4 py-2.5 rounded-lg shadow-sm transition flex items-center gap-1.5">
+          <span>🗑️</span> Delete Courses
+        </button>
+        <button onclick="openCourseModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm px-4 py-2.5 rounded-lg shadow-sm transition">
+          + Create New Course
+        </button>
+      </div>
     </div>
 
     <!-- Courses Grid -->
@@ -68,7 +73,36 @@
     </div>
   </div>
 
-  <script src="/static/js/app.js?v=2"></script>
-  <script src="/static/js/instructor.js?v=2"></script>
+  <!-- Delete Courses Selection Modal -->
+  <div id="deleteCoursesModal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-xl shadow-xl max-w-lg w-full p-6 space-y-4">
+      <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+        <div>
+          <h3 class="text-lg font-bold text-slate-900">Select Courses to Delete</h3>
+          <p class="text-xs text-slate-500">Choose which courses you want to permanently remove.</p>
+        </div>
+        <button onclick="closeDeleteCoursesModal()" class="text-slate-400 hover:text-slate-600 text-lg font-bold">&times;</button>
+      </div>
+
+      <div class="flex justify-between items-center text-xs px-1">
+        <button onclick="toggleSelectAllCourses()" class="text-indigo-600 hover:underline font-semibold" id="btnToggleSelectAll">Select All</button>
+        <span id="selectedCountText" class="text-slate-400">0 selected</span>
+      </div>
+
+      <div id="deleteCoursesList" class="max-h-64 overflow-y-auto divide-y divide-slate-100 border border-slate-200 rounded-lg p-2 space-y-1">
+        <div class="text-center py-4 text-xs text-slate-400">Loading courses...</div>
+      </div>
+
+      <div class="flex justify-end gap-2 pt-2 border-t border-slate-100">
+        <button type="button" onclick="closeDeleteCoursesModal()" class="px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 rounded-lg">Cancel</button>
+        <button type="button" id="btnConfirmBulkDelete" onclick="confirmBulkDeleteCourses()" disabled class="px-4 py-2 text-sm bg-rose-600 disabled:bg-rose-300 hover:bg-rose-700 text-white font-medium rounded-lg shadow-sm transition">
+          Delete Selected
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/js/app.js?v=3"></script>
+  <script src="/static/js/instructor.js?v=3"></script>
 </body>
 </html>
